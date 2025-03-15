@@ -168,7 +168,7 @@ class Logout(View):
     def get(self,*args, **kwargs):
         carrinho = copy.deepcopy(self.request.session.get('carrinho'))
         
-        logout(self.request)
+        logout(self.request) 
         
         self.request.session['carrinho'] = carrinho
         self.request.session.save()
