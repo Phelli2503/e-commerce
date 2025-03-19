@@ -38,8 +38,7 @@
                 </div>
             </div>
         </div>
-        {% endif %}
-
+        
         <div class="col-lg-5 mt-4 mt-lg-0">
             <div class="card shadow-lg p-4 border-0">
                 <div class="text-center mb-3">
@@ -47,7 +46,18 @@
                 </div>
                 <h4 class="text-center mb-3 font-weight-bold">Crie sua conta</h4>
                 <p class="text-muted text-center">É rápido e fácil, basta preencher os campos abaixo.</p>
-
+                {% else %}
+                
+                <div class="col-lg-5 mt-4 mt-lg-0">
+                    <div class="card shadow-lg p-4 border-0">
+                        <div class="text-center mb-3">
+                            <i class="fas fa-user-plus fa-3x text-success"></i>
+                        </div>
+                        
+                        <h1>Atualizar Cadastro</h1>
+                        <p>Utilize o formulário a seguir para atualizar seus dados!</p>
+                
+                {% endif %}
                 <form method="POST" action="">
                     {% csrf_token %}
                     {{ userform|crispy }}
