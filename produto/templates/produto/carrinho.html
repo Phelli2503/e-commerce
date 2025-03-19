@@ -5,54 +5,63 @@
 {% block titulo %} Carrinho | {% endblock %}
 
 {% block conteudo %}
-{% if carrinho %}
-<div class="row mt-3">
-    <div class="col">
-        <h3>Carrinho de compras</h3>
-        <p class="lead">Os produtos, quantidades e preços que você escolheu.</p>
-        
-        {% include "parciais/_carrinho.html" %}
+<div class="container mt-5">
+    {% if carrinho %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm p-4">
+                <h3 class="mb-3"><i class="fas fa-shopping-cart text-primary"></i> Seu Carrinho</h3>
+                <p class="text-muted">Os produtos, quantidades e preços que você escolheu.</p>
 
-    </div>
-</div>
+                {% include "parciais/_carrinho.html" %}
+            </div>
+        </div>
 
-
-
-<div class="row mt-3">
-    <div class="col-lg">
-        <p class='lead'>Total no carrinho</p>
-        
-        <div class='table-responsive'>
-            <table class="table">
-                <tr>
-                    <td class="font-weight-bold">Total</td>
-                    <td>{{ carrinho|cart_totals|formata_preco }}</td>
-                </tr>
-            </table>
+        <div class="col-lg-4">
+            <div class="card shadow-sm p-4">
+                <h4 class="font-weight-bold"><i class="fas fa-receipt text-success"></i> Resumo da Compra</h4>
+                <div class="table-responsive mt-3">
+                    <table class="table">
+                        <tr>
+                            <td class="font-weight-bold">Subtotal:</td>
+                            <td>{{ carrinho|cart_totals|formata_preco }}</td>
+                        </tr>
+                        <tr>
+                            <td class="font-weight-bold">Frete:</td>
+                            <td class="text-muted">Calculado no checkout</td>
+                        </tr>
+                        <tr class="table-success">
+                            <td class="font-weight-bold text-success">Total:</td>
+                            <td class="text-success font-weight-bold">{{ carrinho|cart_totals|formata_preco }}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                {% if request.user.is_authenticated %}
+                <a class="btn btn-lg btn-success btn-block mt-3" href="{% url 'produto:resumodacompra' %}">
+                    <i class="fas fa-check-circle"></i> Finalizar Compra
+                </a>
+                {% else %}
+                <a class="btn btn-lg btn-primary btn-block mt-3" href="{% url 'perfil:criar' %}">
+                    <i class="fas fa-user"></i> Entrar ou Cadastrar
+                </a>
+                {% endif %}
+            </div>
         </div>
     </div>
-    <div class="col-lg mt-auto">
-        {% if request.user.is_authenticated %}
-        <a class="btn btn-lg btn-block btn-primary" href="{% url 'produto:resumodacompra' %}">
-            Finalizar a compra
-        </a>
-        {% else %}
-        <a class="btn btn-lg btn-block btn-primary" href="{% url 'perfil:criar' %}">
-            Entrar ou cadastrar
-        </a>
-        {% endif %}
+
+    {% else %}
+    <div class="row justify-content-center text-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm p-5">
+                <h3 class="text-danger"><i class="fas fa-shopping-basket"></i> Seu Carrinho Está Vazio</h3>
+                <p class="text-muted">Parece que você ainda não adicionou nada ao carrinho. Vamos mudar isso?</p>
+                <a href="{% url 'produto:lista' %}" class="btn btn-lg btn-primary">
+                    <i class="fas fa-arrow-left"></i> Continuar Comprando
+                </a>
+            </div>
+        </div>
     </div>
+    {% endif %}
 </div>
-{% else %}
-
-<div class="row mt-3">
-    <div class="col">
-        <h3>Carrinho Vazio</h3>
-        <p class="lead">Não há produtos no seu carrinho.</p>
-    </div>
-</div>
-
-
-{% endif %}
-
 {% endblock conteudo %}

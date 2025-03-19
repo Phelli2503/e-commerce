@@ -4,73 +4,71 @@
 {% block titulo %} {{ produto.nome }} | {% endblock %}
 
 {% block conteudo %}
-<div class="row">
-    <div class="col-lg-12">
-        <div class="row">
-            <div class="col-lg">
-                <div class="row no-gutters">
-                    <div class="col-lg-12">
-                        {% if produto.imagem %}
-                        <img class="img-fluid" src="{{ produto.imagem.url }}">
-                        {% endif %}
-                    </div>
-                </div>
+<div class="container mt-4">
+    <div class="row">
+        <!-- Imagem do Produto -->
+        <div class="col-lg-6 text-center">
+            {% if produto.imagem %}
+            <div class="image-container border rounded shadow-sm p-3">
+                <img id="product-image" class="img-fluid" src="{{ produto.imagem.url }}" alt="{{ produto.nome }}"
+                    style="max-width: 100%; height: auto; object-fit: cover; transition: transform 0.3s ease;">
             </div>
-            <div class="col-lg">
-                <div class="mt-4 mt-lg-0">
-                    <h1 class="h2">{{ produto.nome }}</h1>
-                    <p class="lead">{{ produto.descricao_curta|linebreaks }}</p>
-                    <p class="lead">
-                        <span id="variation-preco-promocional" class="lead product-price" style="display: none;">
-                            <!-- Preço promocional será exibido aqui -->
-                        </span>
-                        <span id="variation-preco" class="lead product-price">
-                            <!-- Preço padrão será exibido aqui -->
-                        </span>
-                        <span id="variation-preco-original" class="lead product-old-price text-muted" style="display: none;">
-                            <!-- Preço original riscado será exibido aqui -->
-                        </span>
-                    </p>
+            {% endif %}
+        </div>
 
-                    <form action="{% url 'produto:adicionaraocarrinho' %}" id="form-add-to-cart">
-                        <div class="form-group">
-                            <select id="select-variacoes" name="vid" class="form-control form-control-lg">
-                                {% for variacao in produto.variacao_set.all %}
-                                <option data-preco="{{ variacao.preco|formata_preco }}" 
-                                        data-preco-promocional="{% if variacao.preco_promocional %}{{ variacao.preco_promocional|formata_preco }}{% endif %}" 
-                                        value="{{ variacao.id }}">
-                                    {% if variacao.nome %}
-                                        {{ variacao.nome }}
-                                    {% else %}
-                                        {{ variacao }}
-                                    {% endif %}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
+        <!-- Informações do Produto -->
+        <div class="col-lg-6">
+            <h1 class="h2 fw-bold">{{ produto.nome }}</h1>
+            <p class="lead text-muted">{{ produto.descricao_curta|linebreaks }}</p>
 
-                        <div class="text-left">
-                            <button type="submit" class="btn btn-primary btn-lg btn-block">
-                                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                                Adicionar ao carrinho
-                            </button>
-                        </div>
-                    </form>
+            <!-- Seção de Preço -->
+            <div class="mb-3">
+                <span id="variation-preco-promocional" class="fw-bold text-danger fs-3" style="display: none;">
+                    <!-- Preço promocional -->
+                </span>
+                <span id="variation-preco" class="fw-bold fs-3">
+                    <!-- Preço normal -->
+                </span>
+                <span id="variation-preco-original" class="text-muted text-decoration-line-through fs-5" style="display: none;">
+                    <!-- Preço original riscado -->
+                </span>
+            </div>
+
+            <!-- Escolha de Variações -->
+            <form action="{% url 'produto:adicionaraocarrinho' %}" id="form-add-to-cart">
+                <div class="form-group mb-3">
+                    <label for="select-variacoes" class="fw-bold">Escolha uma variação:</label>
+                    <select id="select-variacoes" name="vid" class="form-control form-control-lg">
+                        {% for variacao in produto.variacao_set.all %}
+                        <option data-preco="{{ variacao.preco|formata_preco }}" 
+                                data-preco-promocional="{% if variacao.preco_promocional %}{{ variacao.preco_promocional|formata_preco }}{% endif %}" 
+                                value="{{ variacao.id }}">
+                            {{ variacao.nome|default:variacao }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
 
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="mt-5 mb-5">
-                            {{ produto.descricao_longa }}
-                        </div>
-                    </div>
-                </div>
+                <!-- Botão de Compra -->
+                <button type="submit" class="btn btn-success btn-lg w-100 shadow-sm">
+                    <i class="fa fa-shopping-cart"></i> Adicionar ao carrinho
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Descrição Longa -->
+    <div class="row mt-5">
+        <div class="col-lg-12">
+            <div class="border rounded p-4 shadow-sm">
+                <h3 class="fw-bold">Descrição do Produto</h3>
+                <p class="text-muted">{{ produto.descricao_longa|linebreaks }}</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Adicionando JavaScript para atualizar o preço dinamicamente -->
+<!-- JavaScript para atualização dinâmica do preço -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const selectVariacoes = document.getElementById('select-variacoes');
@@ -84,27 +82,29 @@
             const precoPromocional = opcaoSelecionada.getAttribute('data-preco-promocional');
 
             if (precoPromocional && precoPromocional !== "") {
-                // Exibe o preço promocional e o preço original riscado
                 precoPromocionalElement.textContent = precoPromocional;
                 precoPromocionalElement.style.display = 'inline';
                 precoOriginalElement.innerHTML = `<s>${preco}</s>`;
                 precoOriginalElement.style.display = 'inline';
-                precoElement.style.display = 'none';  // Oculta o preço padrão
+                precoElement.style.display = 'none';
             } else {
-                // Exibe apenas o preço padrão
                 precoElement.textContent = preco;
                 precoElement.style.display = 'inline';
-                precoPromocionalElement.style.display = 'none';  // Oculta o preço promocional
-                precoOriginalElement.style.display = 'none';  // Oculta o preço original riscado
+                precoPromocionalElement.style.display = 'none';
+                precoOriginalElement.style.display = 'none';
             }
         }
 
-        // Atualiza o preço quando a página é carregada
         atualizarPreco();
-
-        // Atualiza o preço quando o usuário seleciona uma opção diferente
         selectVariacoes.addEventListener('change', atualizarPreco);
     });
 </script>
+
+<style>
+    /* Efeito de zoom ao passar o mouse */
+    .image-container img:hover {
+        transform: scale(1.1);
+    }
+</style>
 
 {% endblock conteudo %}

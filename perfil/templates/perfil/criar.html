@@ -1,56 +1,69 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
-{% block titulo %}Criar perfil | {% endblock %}
+
+{% block titulo %} Criar Perfil | {% endblock %}
+
 {% block conteudo %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        {% if not request.user.is_authenticated %}
+        <div class="col-lg-5">
+            <div class="card shadow-lg p-4 border-0">
+                <div class="text-center mb-3">
+                    <i class="fas fa-user-lock fa-3x text-primary"></i>
+                </div>
+                <h4 class="text-center mb-3 font-weight-bold">Bem-vindo de volta!</h4>
+                <p class="text-muted text-center">Faça login para acessar sua conta.</p>
 
-<div class="row">
-    {% if not request.user.is_authenticated %}
-    <div class="col-lg mt-3">
-        <h4>Login</h4>
-        <p>Se você já cadastrou, faça seu Login!</p>
+                <form method="POST" action="{% url 'perfil:login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="InputUsuario"><i class="fas fa-user"></i> Usuário</label>
+                        <input type="text" name="username" class="form-control" id="InputUsuario"
+                            placeholder="Digite seu usuário">
+                    </div>
+                    <div class="form-group">
+                        <label for="InputSenha"><i class="fas fa-lock"></i> Senha</label>
+                        <input name="password" type="password" class="form-control" id="InputSenha"
+                            placeholder="Informe sua senha">
+                    </div>
 
-        <form method="POST" action="{% url 'perfil:login' %}">
-            {% csrf_token %}
-            <div class="form-group">
-              <label for="InputUsuario">Usuário</label>
-              <input type="text" name="username" class="form-control" id="InputUsuario" aria-describedby="UsuarioHelp" placeholder="Digite seu usuário">
-              
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">Senha:</label>
-              <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Informe sua senha">
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block btn-lg">Entrar</button>
-          </form>
-
-    </div>
-    {% endif %}
-
-    <div class="col-lg mt-3">
-    
-        {% block titulocadastro %}
-        <h4>Cadastro</h4>
-        <p>Caso não tenha cadastro, basta preencher o formulário e cadastrar!</p>
-        {% endblock %}
-
-        <form method="POST" action='' >
-            {% csrf_token %}
-            {{ userform|crispy }}
-            {{ perfilform|crispy }}
-
-            <div class='row'>
-                <div class='col'>
-                    <button type="submit" class='btn btn-primary btn-block btn-lg'>
-                        Enviar
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        <i class="fas fa-sign-in-alt"></i> Entrar
                     </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <a href="#" class="text-muted"><i class="fas fa-question-circle"></i> Esqueceu sua senha?</a>
                 </div>
             </div>
-            
-        </form>
+        </div>
+        {% endif %}
 
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="card shadow-lg p-4 border-0">
+                <div class="text-center mb-3">
+                    <i class="fas fa-user-plus fa-3x text-success"></i>
+                </div>
+                <h4 class="text-center mb-3 font-weight-bold">Crie sua conta</h4>
+                <p class="text-muted text-center">É rápido e fácil, basta preencher os campos abaixo.</p>
+
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {{ userform|crispy }}
+                    {{ perfilform|crispy }}
+
+                    <button type="submit" class="btn btn-success btn-block btn-lg mt-3">
+                        <i class="fas fa-user-check"></i> Criar Conta
+                    </button>
+                </form>
+
+                <div class="text-center mt-3">
+                    <p class="text-muted">Já tem uma conta? <a href="{% url 'perfil:login' %}" class="text-primary">
+                            Faça login aqui</a>.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 {% endblock conteudo %}
-

@@ -1,46 +1,57 @@
 {% load static %}
 {% load omfilters %}
+
 <div class="table-responsive">
-    <table class="table">
+    <table class="table table-bordered table-hover text-center align-middle">
         
-        <tr>
-            <th class="d-none d-lg-block">Imagem</th>
-            <th>Produto</th>
-            <th>V.</th>
-            <th>QTD.</th>
-            <th>Total</th>
-        </tr>
-
-        {% for linha in carrinho.values %}
-        <tr>
-            <td class="d-none d-lg-block">
-                <img class="cart-img" src="{% get_media_prefix %}{{ linha.imagem }}">
-            </td>
-            <td>
-               <a href="{% url 'produto:detalhe' linha.slug %}">   
-                    {{ linha.produto_nome }}
-                </a>
-                <a class="ml-3" href="{% url 'produto:removerdocarrinho' %}?vid={{ linha.variacao_id }}"> 
-                    <i class="fas fa-times-circle text-danger" aria-hidden="true"></i>
-                </a>
-            </td>
-            <td>{{ linha.variacao_nome }}</td>
-            <td>{{ linha.quantidade }} x
-                {% if linha.preco_unitario_promocional %}
-                {{ linha.preco_unitario_promocional }}
-                {% else %}
-                {{ linha.preco_unitario }}
-                {% endif %}
-            </td>
-            {% if linha.preco_quantitativo_promocional %}
-            <td>{{ linha.preco_quantitativo_promocional|formata_preco }}</td>
-            {% else %}
-            <td>{{ linha.preco_quantitativo|formata_preco }}</td>
-            {% endif %}
-
-        </tr>
-        {% endfor %}
+        <thead class="thead-dark">
+            <tr>
+                <th class="d-none d-lg-table-cell">Imagem</th>
+                <th>Produto</th>
+                <th>Variação</th>
+                <th>Quant.</th>
+                <th>Uni,</th>
+                <th>Total</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
         
-
+        <tbody>
+            {% for linha in carrinho.values %}
+            <tr>
+                <td class="d-none d-lg-table-cell">
+                    <img class="cart-img img-fluid" src="{% get_media_prefix %}{{ linha.imagem }}" alt="{{ linha.produto_nome }}">
+                </td>
+                <td class="text-left">
+                    <a href="{% url 'produto:detalhe' linha.slug %}" class="font-weight-bold text-dark">
+                        {{ linha.produto_nome }}
+                    </a>
+                </td>
+                <td>{{ linha.variacao_nome }}</td>
+                <td>
+                    <span class="badge badge-pill badge-secondary p-2">{{ linha.quantidade }}</span>
+                </td>
+                <td>
+                    {% if linha.preco_unitario_promocional %}
+                        <span class="text-danger font-weight-bold">{{ linha.preco_unitario_promocional|formata_preco }}</span>
+                    {% else %}
+                        {{ linha.preco_unitario|formata_preco }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if linha.preco_quantitativo_promocional %}
+                        <span class="text-success font-weight-bold">{{ linha.preco_quantitativo_promocional|formata_preco }}</span>
+                    {% else %}
+                        {{ linha.preco_quantitativo|formata_preco }}
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'produto:removerdocarrinho' %}?vid={{ linha.variacao_id }}" class="text-danger">
+                        <i class="fas fa-trash-alt fa-lg"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </div>
